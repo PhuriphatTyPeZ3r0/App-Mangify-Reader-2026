@@ -39,7 +39,14 @@ if (!supabaseUrl || !serviceRoleKey) {
 
 const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-const targetMangaIds = ["moby-dick", "you-wont-get-me-twice"];
+const targetMangaIds = [
+  "moby-dick",
+  "you-wont-get-me-twice",
+  "a-theme-for-every-building",
+  "the-hole-diary",
+  "regressed-warriors-female-dominance",
+  "my-new-family-treats-me-well"
+];
 
 function getStandardizedChapterId(mangaId, chapterUrlOrSegment, title) {
   const decoded = decodeURIComponent(chapterUrlOrSegment);
@@ -185,6 +192,11 @@ async function scrapeChapters() {
         ];
         for (const pat of cleanPatterns) {
           cleanTitle = cleanTitle.replace(pat, "").trim();
+        }
+
+        if (!cleanTitle) {
+          const chNum = chapterId.split("-ch-").pop();
+          cleanTitle = chNum ? `ตอนที่ ${chNum}` : "ตอนที่ 1";
         }
 
         // Open a new tab for this chapter to ensure clean session

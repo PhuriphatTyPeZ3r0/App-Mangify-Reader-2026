@@ -190,34 +190,32 @@ async function scrape() {
     console.log(`🔍 Total anchors in page: ${totalAnchors}`);
     console.log(`📂 Found ${mangaLinks.length} H-Manhwa manga links.`);
     
-    // Limit to first 2 mangas for verification/testing
-    const testMangaLinks = mangaLinks.slice(0, 2);
+    // Process all discovered mangas
+    const testMangaLinks = mangaLinks;
     
     for (const mangaUrl of testMangaLinks) {
+      const mangaId = decodeURIComponent(mangaUrl.split('/').filter(Boolean).pop());
+      const existingSet = existingChapterMap.get(mangaId) || new Set();
+      
+      console.log(`\n📖 Scraping H-Manhwa Manga Details: ${mangaUrl}`);
+      
+      // Open a dedicated tab for the manga details page
+      const mangaPage = await browser.newPage();
+      await mangaPage.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+      await mangaPage.setViewport({ width: 1280, height: 800 });
+      
       try {
-        console.log(`\n📖 Scraping H-Manhwa Manga Details: ${mangaUrl}`);
+        console.log(`   🔗 Navigating directly to detail page: ${mangaUrl}`);
+        await mangaPage.goto(mangaUrl, { waitUntil: "domcontentloaded", timeout: 45000 });
         
-        const mangaId = decodeURIComponent(mangaUrl.split('/').filter(Boolean).pop());
-        const existingSet = existingChapterMap.get(mangaId) || new Set();
+        const mainTitle = await mangaPage.title();
+        if (mainTitle.includes("Attention Required!") || mainTitle.includes("Blocked") || mainTitle.includes("Cloudflare")) {
+          throw new Error("Cloudflare challenge page detected on details page");
+        }
+        
+        await mangaPage.waitForSelector('.post-title, h1, .chapter-link, .wp-manga-chapter', { timeout: 15000 }).catch(() => {});
 
-        // 2. Click manga link to simulate human behavior immediately (without DB network delay)
-        console.log(`   Current page before click - Title: "${await page.title()}" | URL: ${page.url()}`);
-        await page.evaluate((url) => {
-          const links = Array.from(document.querySelectorAll('a'));
-          const decodedTarget = decodeURIComponent(url).replace(/\/$/, "");
-          const target = links.find(a => {
-            if (!a.href) return false;
-            const decodedHref = decodeURIComponent(a.href).replace(/\/$/, "");
-            return decodedHref === decodedTarget;
-          });
-          if (target) target.click();
-          else throw new Error("Link not found in DOM: " + url + " | Decoded target: " + decodedTarget + " | Available links count: " + links.length);
-        }, mangaUrl);
-
-        await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 35000 });
-        await page.waitForSelector('.post-title, h1, .chapter-link, .wp-manga-chapter', { timeout: 15000 }).catch(() => {});
-
-        const mangaData = await page.evaluate((url) => {
+        const mangaData = await mangaPage.evaluate((url) => {
           const h1 = document.querySelector('h1')?.textContent?.trim() || "";
           const title = h1 || document.querySelector('.post-title')?.textContent?.trim() || "";
           const description = document.querySelector('.summary__content, .description-summary, .entry-content')?.textContent?.trim() || "";
@@ -284,9 +282,8 @@ async function scrape() {
           return { id, title, description, cover, author, artist, status, type, releaseYear, viewsCount, originalTitle, genres, chapters };
         }, mangaUrl);
 
-        if (!mangaData.id || !mangaData.title) {
-          console.log("⚠️ Skipping: Could not parse ID or Title.");
-          continue;
+        if (!mangaData.id || !mangaData.title || mangaData.title === "โดจินเกาหลี hmanhwa" || mangaData.title === "โดจินเกาหลี-hmanhwa" || mangaData.title.includes("Attention Required")) {
+          throw new Error(`Scraped invalid metadata. ID: ${mangaData.id}, Title: "${mangaData.title}"`);
         }
 
         // Add default genres
@@ -334,34 +331,30 @@ async function scrape() {
             /\s*-\s*อัปเดท\s*$/gi,
             /\s+อัพเดท\s*$/gi,
             /\s+อัปเดต\s*$/gi,
-            /\s+อัพเดต\s*$/gi,
+            /\s+อัปเดต\s*$/gi,
             /\s+อัปเดท\s*$/gi
           ];
           for (const pat of cleanPatterns) {
             cleanTitle = cleanTitle.replace(pat, "").trim();
           }
 
-          try {
-            // Click chapter link to simulate human behavior
-            await page.evaluate((url) => {
-              const links = Array.from(document.querySelectorAll('.wp-manga-chapter a, .chapter-link a, .listing-chapters ul li a, a'));
-              const decodedTargetUrl = decodeURIComponent(url);
-              const target = links.find(a => {
-                if (!a.href) return false;
-                const decodedHref = decodeURIComponent(a.href);
-                return a.href === url || decodedHref === decodedTargetUrl;
-              });
-              if (target) target.click();
-              else throw new Error("Chapter link not found in DOM");
-            }, ch.url);
+          if (!cleanTitle) {
+            const chNum = chapterId.split("-ch-").pop();
+            cleanTitle = chNum ? `ตอนที่ ${chNum}` : "ตอนที่ 1";
+          }
 
-            await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 });
-            await page.waitForSelector('.page-break img, .reading-content img, #readerarea img', { timeout: 15000 }).catch(() => {});
+          // Open a new tab for this chapter page to ensure clean session and bypass Cloudflare
+          const chPage = await browser.newPage();
+          await chPage.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+          await chPage.setViewport({ width: 1280, height: 800 });
+
+          try {
+            console.log(`      🔗 Navigating directly to chapter: ${ch.url}`);
+            await chPage.goto(ch.url, { waitUntil: "domcontentloaded", timeout: 45000 });
+            await chPage.waitForSelector('.page-break img, .reading-content img, #readerarea img, .v_content img', { timeout: 15000 }).catch(() => {});
             await new Promise(r => setTimeout(r, 2000)); // Small delay for scripts to execute
 
-            console.log(`      Landed on: ${page.url()} | Title: ${await page.title()}`);
-
-            const pageImages = await page.evaluate(() => {
+            const pageImages = await chPage.evaluate(() => {
               const selectors = ['.page-break img', '.reading-content img', '#readerarea img', '.v_content img'];
               let found = [];
               for (const sel of selectors) {
@@ -411,10 +404,11 @@ async function scrape() {
             console.error(`   ❌ Failed to scrape chapter ${ch.title}:`, chErr.message);
             stats.errors.push(`Chapter "${ch.title}" of manga "${mangaData.title}": ${chErr.message}`);
           } finally {
-            // Return to details page
-            console.log("   🔙 Returning to manga details page...");
-            await page.goBack({ waitUntil: "domcontentloaded", timeout: 35000 }).catch(() => {});
-            await new Promise(r => setTimeout(r, 2000));
+            await chPage.close();
+            // Delay between chapter crawls to avoid detection
+            const delay = Math.floor(Math.random() * 2000) + 1500;
+            console.log(`      Waiting ${delay}ms before next chapter...`);
+            await new Promise(r => setTimeout(r, delay));
           }
         }
 
@@ -445,11 +439,10 @@ async function scrape() {
         console.error(`💥 Failed to scrape manga ${mangaUrl}:`, mangaErr.message);
         stats.errors.push(`Manga "${mangaUrl}": ${mangaErr.message}`);
       } finally {
-        console.log("🔙 Returning to genre list page...");
-        await page.goto(TARGET_GENRE_URL, { waitUntil: "domcontentloaded", timeout: 35000 }).catch(() => {});
-        // Scroll to load lazy items again
-        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
-        await new Promise(r => setTimeout(r, 4500));
+        await mangaPage.close();
+        const delay = Math.floor(Math.random() * 2000) + 3000;
+        console.log(`   Waiting ${delay}ms before next manga details...`);
+        await new Promise(r => setTimeout(r, delay));
       }
     }
   } catch (err) {
@@ -470,7 +463,24 @@ async function scrape() {
       
       if (allCompletedChapters.length > 0) {
         console.log(`   Saving all chapters in bulk...`);
-        const { error: upsertError } = await supabaseAdmin.from("chapters").upsert(allCompletedChapters);
+        // Deduplicate chapters by ID (preferring non-empty titles and higher page counts) to prevent ON CONFLICT DO UPDATE errors
+        const uniqueChaptersMap = new Map();
+        for (const ch of allCompletedChapters) {
+          const existing = uniqueChaptersMap.get(ch.id);
+          if (!existing) {
+            uniqueChaptersMap.set(ch.id, ch);
+          } else {
+            const preferNew = (!existing.title && ch.title) || 
+                              (ch.pages && ch.pages.length > (existing.pages || []).length);
+            if (preferNew) {
+              uniqueChaptersMap.set(ch.id, ch);
+            }
+          }
+        }
+        const uniqueChapters = Array.from(uniqueChaptersMap.values());
+        console.log(`   Unique chapters to save: ${uniqueChapters.length} (from ${allCompletedChapters.length} total extracted)`);
+
+        const { error: upsertError } = await supabaseAdmin.from("chapters").upsert(uniqueChapters);
         if (upsertError) {
           console.error("❌ Error upserting chapters to Supabase:", upsertError.message);
           stats.errors.push(`Failed to save chapters in bulk: ${upsertError.message}`);
