@@ -1,4 +1,4 @@
-﻿# 📖 App-Mangify-Reader-2026 (Mangify)
+﻿# <img src="https://api.iconify.design/material-symbols:auto-stories-outline.svg?color=%230284C7" width="28" height="28" align="center" /> App-Mangify-Reader-2026 (Mangify)
 
 <div align="center">
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 📌 สารบัญ (Table of Contents)
+## <img src="https://api.iconify.design/material-symbols:list-alt-outline.svg?color=%236366F1" width="20" height="20" align="center" /> สารบัญ (Table of Contents)
 - [📖 เกี่ยวกับโปรเจกต์ (About The Project)](#-เกี่ยวกับโปรเจกต์-about-the-project)
 - [✨ ฟีเจอร์หลัก (Key Features)](#-ฟีเจอร์หลัก-key-features)
 - [🎨 ระบบดีไซน์และธีมการอ่าน (Reader-Centric Design System)](#-ระบบดีไซน์และธีมการอ่าน-reader-centric-design-system)
@@ -31,7 +31,7 @@
 
 ---
 
-## 📖 เกี่ยวกับโปรเจกต์ (About The Project)
+## <img src="https://api.iconify.design/material-symbols:info-outline.svg?color=%230284C7" width="22" height="22" align="center" /> เกี่ยวกับโปรเจกต์ (About The Project)
 
 > **ที่มาและปัญหา (Problem Statement):**  
 > เว็บไซต์อ่านมังงะและคอมมิคทั่วไปมักมีโฆษณาแทรกกวนใจ ประสิทธิภาพการโหลดรูปภาพช้าบนเครือข่ายมือถือ และไม่มีระบบปรับโทนสีหน้าจอที่เหมาะสมกับการอ่านต่อเนื่องเป็นเวลานาน ทำให้เกิดอาการล้าสายตา (Eye Fatigue)
@@ -45,7 +45,7 @@
 
 ---
 
-## ✨ ฟีเจอร์หลัก (Key Features)
+## <img src="https://api.iconify.design/material-symbols:featured-play-list-outline.svg?color=%23F59E0B" width="22" height="22" align="center" /> ฟีเจอร์หลัก (Key Features)
 
 - [x] ⚡ **Smooth Infinite Scroll:** อ่านตอนต่อตอนได้ต่อเนื่องแบบ Webtoon ไม่มีสะดุด
 - [x] 🎨 **4 Reader Display Themes:** สลับโทนสีได้ทันที (Milk White, Vintage Sepia, Cool Charcoal, Pure OLED)
@@ -56,7 +56,7 @@
 
 ---
 
-## 🎨 ระบบดีไซน์และธีมการอ่าน (Reader-Centric Design System)
+## <img src="https://api.iconify.design/material-symbols:palette-outline.svg?color=%23EC4899" width="22" height="22" align="center" /> ระบบดีไซน์และธีมการอ่าน (Reader-Centric Design System)
 
 | ธีม (Theme) | โทนสีพื้นหลัง | วัตถุประสงค์ในการใช้งาน |
 |---|:---:|---|
@@ -70,7 +70,7 @@
 
 ---
 
-## 🛠️ สถาปัตยกรรมและเทคโนโลยี (Tech Stack & Architecture)
+## <img src="https://api.iconify.design/material-symbols:build-outline.svg?color=%2310B981" width="22" height="22" align="center" /> สถาปัตยกรรมและเทคโนโลยี (Tech Stack & Architecture)
 
 ### 🎨 Frontend
 - **Framework:** Next.js 16 (App Router)
@@ -94,7 +94,7 @@ graph LR
 
 ---
 
-## 📂 โครงสร้างโฟลเดอร์ (Directory Structure)
+## <img src="https://api.iconify.design/material-symbols:folder-open-outline.svg?color=%23F59E0B" width="22" height="22" align="center" /> โครงสร้างโฟลเดอร์ (Directory Structure)
 
 ```text
 App-Mangify-Reader-2026/
@@ -113,7 +113,7 @@ App-Mangify-Reader-2026/
 
 ---
 
-## 🚀 การติดตั้งและเริ่มต้นใช้งาน (Getting Started)
+## <img src="https://api.iconify.design/material-symbols:rocket-launch-outline.svg?color=%23F59E0B" width="22" height="22" align="center" /> การติดตั้งและเริ่มต้นใช้งาน (Getting Started)
 
 ### ข้อกำหนดเบื้องต้น (Prerequisites)
 - [Node.js](https://nodejs.org/) (Version 18.x หรือ 20.x ขึ้นไป)
@@ -141,7 +141,7 @@ App-Mangify-Reader-2026/
 
 ---
 
-## 🔐 การกำหนดค่า Environment Variables
+## <img src="https://api.iconify.design/material-symbols:lock-outline.svg?color=%236366F1" width="22" height="22" align="center" /> การกำหนดค่า Environment Variables
 
 กำหนดค่าตัวแปรในไฟล์ `.env.local`:
 
@@ -159,10 +159,10 @@ AWS_S3_BUCKET_NAME=mangify-chapters
 
 ---
 
-## 👨‍💻 ผู้พัฒนา (Author)
+## <img src="https://api.iconify.design/material-symbols:person-outline.svg?color=%2306B6D4" width="22" height="22" align="center" /> ผู้พัฒนา (Author)
 
 **Phuriphat Hemakul (PhuriphatTyPeZ3r0)**
-- 🎓 นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CAI)
-- 🏛️ สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
-- 🐙 GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
-- 🌐 Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)
+- <img src="https://api.iconify.design/material-symbols:school-outline.svg?color=%230284C7" width="16" height="16" align="center" /> นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CAI)
+- <img src="https://api.iconify.design/material-symbols:apartment-rounded.svg?color=%230284C7" width="16" height="16" align="center" /> สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
+- <img src="https://api.iconify.design/simple-icons:github.svg?color=%23181717" width="16" height="16" align="center" /> GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
+- <img src="https://api.iconify.design/material-symbols:language.svg?color=%233B82F6" width="16" height="16" align="center" /> Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)
