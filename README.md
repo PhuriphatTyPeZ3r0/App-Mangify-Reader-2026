@@ -165,4 +165,4 @@ AWS_S3_BUCKET_NAME=mangify-chapters
 - 🎓 นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (PIM CAI)
 - 🏛️ สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
 - 🐙 GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
-- 🌐 Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)
+- 🌐 Portfolio: [portfolio-phuriphatizamus-projects.vercel.app](https://portfolio-phuriphatizamus-projects.vercel.app)
